@@ -38,7 +38,7 @@ public class User extends BaseEntity {
     @OneToOne(mappedBy = "user")
     private Profile profile;
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "patient")
     private Set<Appointment> appointments;
 
 
