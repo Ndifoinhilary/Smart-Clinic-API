@@ -53,7 +53,7 @@ public class Doctor {
     // =======================
 
     /*
-     * Get a doctor's full name from an associated user
+     * Get a doctor's full name from an associated auth
      */
 
     public String getFullName() {

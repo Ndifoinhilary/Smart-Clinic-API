@@ -1,5 +1,5 @@
 package org.bydefault.smartclinic.entities;
 
-public enum Roles {
+public enum Role {
     ADMIN, DOCTOR, PATIENT
 }
