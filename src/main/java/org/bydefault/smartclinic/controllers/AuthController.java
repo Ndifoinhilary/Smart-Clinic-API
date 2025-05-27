@@ -6,7 +6,7 @@ import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bydefault.smartclinic.dtos.auth.*;
-import org.bydefault.smartclinic.services.AuthUserServices;
+import org.bydefault.smartclinic.services.auth.AuthUserServices;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;

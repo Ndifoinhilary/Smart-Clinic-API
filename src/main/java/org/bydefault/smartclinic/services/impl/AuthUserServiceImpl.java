@@ -15,7 +15,7 @@ import org.bydefault.smartclinic.mappers.UserMapper;
 import org.bydefault.smartclinic.repository.UserRepository;
 import org.bydefault.smartclinic.securityConfig.JwtConfig;
 import org.bydefault.smartclinic.securityConfig.JwtServices;
-import org.bydefault.smartclinic.services.AuthUserServices;
+import org.bydefault.smartclinic.services.auth.AuthUserServices;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.AuthenticationException;

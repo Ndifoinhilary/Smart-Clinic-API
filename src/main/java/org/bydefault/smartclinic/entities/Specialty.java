@@ -21,6 +21,9 @@ public class Specialty {
     @Column(unique = true, nullable = false)
     private String name;
 
+    @Column(length = 1000)
+    private String description;
+
     @OneToMany(mappedBy = "specialty")
     private Set<Doctor>doctors;
 }

@@ -1,4 +1,4 @@
-package org.bydefault.smartclinic.services;
+package org.bydefault.smartclinic.services.auth;
 
 import jakarta.servlet.http.HttpServletResponse;
 import org.bydefault.smartclinic.dtos.auth.*;
