@@ -1,12 +1,14 @@
 package org.bydefault.smartclinic.dtos.auth;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 @Data
+@Schema(name = "Register", description = "Register Data Transfer Object for Authentication")
 public class RegisterUserDto {
 
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)

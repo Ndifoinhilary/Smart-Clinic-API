@@ -1,0 +1,20 @@
+package org.bydefault.smartclinic.dtos.admin;
+
+import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.Data;
+
+import java.util.Date;
+
+@Data
+@Schema(name = "Availability", description = "Availability information model")
+public class AvailabilityDto {
+    private Long id;
+
+    private String day;
+
+    private String time;
+
+    private Date date;
+
+    private boolean isAvailable;
+}

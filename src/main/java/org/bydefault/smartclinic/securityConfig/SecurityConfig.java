@@ -60,6 +60,7 @@ public class SecurityConfig {
                                 .requestMatchers(HttpMethod.POST, "/api/v1/auth/resend-verification/").permitAll()
                                 .requestMatchers(HttpMethod.POST, "/api/v1/auth/verify/").permitAll()
                                 .requestMatchers(HttpMethod.POST, "/api/v1/auth/refresh-token/").permitAll()
+                                .requestMatchers("/swagger-ui/**", "/swagger-ui.html", "/v3/api-docs/**").permitAll()
                                 .anyRequest().authenticated())
                 .addFilterBefore(jwtFilters, UsernamePasswordAuthenticationFilter.class)
                 .exceptionHandling(c -> {
