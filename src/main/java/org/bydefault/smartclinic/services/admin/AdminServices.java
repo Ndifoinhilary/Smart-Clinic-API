@@ -1,6 +1,6 @@
 package org.bydefault.smartclinic.services.admin;
 
-import org.bydefault.smartclinic.dtos.admin.*;
+import org.bydefault.smartclinic.dtos.common.*;
 import org.bydefault.smartclinic.entities.Role;
 import org.springframework.data.domain.Page;
 

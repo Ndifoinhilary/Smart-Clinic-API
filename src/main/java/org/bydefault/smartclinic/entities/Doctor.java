@@ -30,6 +30,8 @@ public class Doctor {
 
     private String anyOtherQualifications;
 
+    private String shortVideo;
+
     private boolean accepted;
 
     @ManyToOne(optional = false, cascade = {CascadeType.PERSIST, CascadeType.MERGE})

@@ -10,7 +10,7 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
-import org.bydefault.smartclinic.dtos.admin.*;
+import org.bydefault.smartclinic.dtos.common.*;
 import org.bydefault.smartclinic.entities.Role;
 import org.bydefault.smartclinic.services.admin.AdminServices;
 import org.springframework.data.domain.Page;
@@ -90,7 +90,7 @@ public class AdminController {
             @ApiResponse(responseCode = "404", description = "User not found",
                     content = @Content(schema = @Schema()))
     })
-    @GetMapping("user/{id}")
+    @DeleteMapping("user/{id}")
     public ResponseEntity<?> deleteUser(@PathVariable Long id) {
         return new ResponseEntity<>(services.deleteUser(id), HttpStatus.NO_CONTENT);
     }
@@ -126,7 +126,7 @@ public class AdminController {
             @ApiResponse(responseCode = "404", description = "Appointment not found",
                     content = @Content(schema = @Schema()))
     })
-    @GetMapping("appointment/{id}/delete/")
+    @DeleteMapping("appointment/{id}/delete/")
     public ResponseEntity<?> cancelAppointment(@PathVariable Long id) {
         return ResponseEntity.ok(services.deleteAppointment(id));
     }

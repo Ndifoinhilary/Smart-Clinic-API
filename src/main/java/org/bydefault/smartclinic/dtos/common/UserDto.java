@@ -1,10 +1,9 @@
-package org.bydefault.smartclinic.dtos.admin;
+package org.bydefault.smartclinic.dtos.common;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import org.bydefault.smartclinic.entities.Role;
 
-import java.util.Set;
 @Data
 @Schema(
         description = "User Data Transfer Object",

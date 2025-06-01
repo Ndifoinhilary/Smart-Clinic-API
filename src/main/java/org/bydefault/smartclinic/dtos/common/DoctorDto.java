@@ -1,11 +1,8 @@
-package org.bydefault.smartclinic.dtos.admin;
+package org.bydefault.smartclinic.dtos.common;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.persistence.*;
 import lombok.Data;
-import org.bydefault.smartclinic.entities.Availability;
 import org.bydefault.smartclinic.entities.Specialty;
-import org.bydefault.smartclinic.entities.User;
 
 import java.util.Set;
 

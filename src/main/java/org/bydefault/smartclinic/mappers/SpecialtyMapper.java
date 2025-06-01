@@ -1,6 +1,6 @@
 package org.bydefault.smartclinic.mappers;
 
-import org.bydefault.smartclinic.dtos.admin.SpecialtyDto;
+import org.bydefault.smartclinic.dtos.common.SpecialtyDto;
 import org.bydefault.smartclinic.entities.Specialty;
 import org.mapstruct.Mapper;
 

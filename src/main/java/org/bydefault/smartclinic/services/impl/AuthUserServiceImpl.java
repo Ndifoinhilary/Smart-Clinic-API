@@ -6,23 +6,30 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bydefault.smartclinic.dtos.auth.*;
+import org.bydefault.smartclinic.dtos.common.ProfileDto;
 import org.bydefault.smartclinic.dtos.user.UserDto;
 import org.bydefault.smartclinic.email.EmailService;
+import org.bydefault.smartclinic.entities.Profile;
 import org.bydefault.smartclinic.entities.Role;
 import org.bydefault.smartclinic.entities.User;
 import org.bydefault.smartclinic.exception.*;
+import org.bydefault.smartclinic.mappers.ProfileMapper;
 import org.bydefault.smartclinic.mappers.UserMapper;
+import org.bydefault.smartclinic.repository.ProfileRepository;
 import org.bydefault.smartclinic.repository.UserRepository;
 import org.bydefault.smartclinic.securityConfig.JwtConfig;
 import org.bydefault.smartclinic.securityConfig.JwtServices;
 import org.bydefault.smartclinic.services.auth.AuthUserServices;
+import org.bydefault.smartclinic.services.auth.ImageService;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.Random;
 import java.util.concurrent.CompletableFuture;
@@ -35,11 +42,14 @@ public class AuthUserServiceImpl implements AuthUserServices {
     //    in minutes
     private static final int CODE_EXPIRY_MINUTES = 5;
     private final UserRepository userRepository;
+    private final ProfileRepository profileRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtServices jwtServices;
     private final JwtConfig jwtConfig;
     private final UserMapper userMapper;
+    private final ProfileMapper profileMapper;
     private final EmailService emailService;
+    private final ImageService imageService;
     private final AuthenticationManager authenticationManager;
 
     private String generateVerificationCode() {
@@ -250,6 +260,60 @@ public class AuthUserServiceImpl implements AuthUserServices {
 
         log.info("Password reset successfully for email: {}", user.getEmail());
         return "Password reset successfully. Please go ahead and login with your new password.";
+    }
+
+    @Override
+    public ProfileDto updateProfile(ProfileDto profileDto, MultipartFile profileImage) {
+        var authentication = SecurityContextHolder.getContext().getAuthentication();
+        var userId = (Long) authentication.getPrincipal();
+        var user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User with id " + userId + " not found"));
+
+        Profile profile;
+        String oldImageUrl = null;
+        if (user.getProfile() != null) {
+            profile = user.getProfile();
+            oldImageUrl = profile.getImageUrl();
+            profileMapper.updateEntityFromDto(profileDto, profile);
+        } else {
+            profile = profileMapper.toEntity(profileDto);
+            profile.setUser(user);
+            user.setProfile(profile);
+        }
+        if (profileImage != null && !profileImage.isEmpty()) {
+            try {
+                String newImageUrl = imageService.uploadProfileImage(profileImage, userId);
+                profile.setImageUrl(newImageUrl);
+
+                // Delete an old image if it exists and is different
+                if (oldImageUrl != null && !oldImageUrl.equals(newImageUrl)) {
+                    imageService.deleteImage(oldImageUrl);
+                    log.info("Old profile image deleted for user: {}", user.getEmail());
+                }
+            } catch (IOException e) {
+                log.error("Error uploading profile image for user: {}", user.getEmail(), e);
+                throw new RuntimeException("Failed to upload profile image: " + e.getMessage());
+            }
+        }
+
+        var savedProfile = profileRepository.save(profile);
+        log.info("Profile updated successfully for user: {}", user.getEmail());
+
+        return profileMapper.toDto(savedProfile);
+    }
+
+    @Override
+    public ProfileDto getCurrentUserProfile() {
+        var authentication = SecurityContextHolder.getContext().getAuthentication();
+        var userId = (Long) authentication.getPrincipal();
+        var user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User with id " + userId + " not found"));
+
+        if (user.getProfile() == null) {
+            throw new ResourceNotFoundException("Profile not found for user");
+        }
+
+        return profileMapper.toDto(user.getProfile());
     }
 
 }

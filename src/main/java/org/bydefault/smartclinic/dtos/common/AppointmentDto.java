@@ -1,11 +1,8 @@
-package org.bydefault.smartclinic.dtos.admin;
+package org.bydefault.smartclinic.dtos.common;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import org.bydefault.smartclinic.entities.AppointmentStatus;
 
-import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Date;
 

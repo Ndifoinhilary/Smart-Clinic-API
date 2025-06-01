@@ -2,7 +2,7 @@ package org.bydefault.smartclinic.services.impl;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.bydefault.smartclinic.dtos.admin.*;
+import org.bydefault.smartclinic.dtos.common.*;
 import org.bydefault.smartclinic.entities.*;
 import org.bydefault.smartclinic.exception.ResourceNotFoundException;
 import org.bydefault.smartclinic.exception.UserNotVerifiedException;
