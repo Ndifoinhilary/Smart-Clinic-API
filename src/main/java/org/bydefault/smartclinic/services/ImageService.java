@@ -1,4 +1,4 @@
-package org.bydefault.smartclinic.services.auth;
+package org.bydefault.smartclinic.services;
 
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
