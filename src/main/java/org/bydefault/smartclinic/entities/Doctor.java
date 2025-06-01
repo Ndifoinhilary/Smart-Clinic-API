@@ -34,6 +34,13 @@ public class Doctor {
 
     private boolean accepted;
 
+    @Enumerated(EnumType.STRING)
+    private ApplicationStatus status;
+
+    private LocalDateTime submittedAt;
+
+    private LocalDateTime reviewedAt;
+
     @ManyToOne(optional = false, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinColumn(name = "specialty_id")
     private Specialty specialty;
@@ -61,7 +68,6 @@ public class Doctor {
     public String getFullName() {
         return user.getFirstName() + " " + user.getLastName();
     }
-
 
     /*
      * Get doctors specialty name

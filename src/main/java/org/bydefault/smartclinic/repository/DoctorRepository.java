@@ -10,4 +10,6 @@ public interface DoctorRepository extends JpaRepository<Doctor, Long> {
     Doctor findByUser(User user);
     Optional<Doctor> findOptionalByUser(User user);
 
+    boolean existsByUserId(Long userId);
+
 }

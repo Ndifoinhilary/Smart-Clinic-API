@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Doctor Application Update</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333333;
+            background-color: #f8f9fa;
+        }
+
+        .email-container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px 20px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            font-weight: 300;
+            margin-bottom: 5px;
+        }
+
+        .header p {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+
+        .content {
+            padding: 40px 30px;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 20px;
+            color: white;
+        }
+
+        .status-title {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #2c3e50;
+        }
+
+        .status-message {
+            font-size: 18px;
+            color: #34495e;
+            margin-bottom: 15px;
+        }
+
+        .status-description {
+            font-size: 16px;
+            color: #7f8c8d;
+            margin-bottom: 30px;
+            line-height: 1.8;
+        }
+
+        .application-details {
+            background-color: #f8f9fa;
+            border-left: 4px solid #007bff;
+            padding: 20px;
+            margin: 30px 0;
+            border-radius: 5px;
+        }
+
+        .application-details h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+
+        .detail-item {
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+
+        .detail-label {
+            font-weight: 600;
+            color: #34495e;
+            display: inline-block;
+            width: 140px;
+        }
+
+        .detail-value {
+            color: #7f8c8d;
+        }
+
+        .next-steps {
+            margin: 30px 0;
+        }
+
+        .next-steps h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+
+        .steps-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .steps-list li {
+            padding: 10px 0;
+            padding-left: 30px;
+            position: relative;
+            color: #34495e;
+            line-height: 1.6;
+        }
+
+        .steps-list li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            top: 10px;
+            color: #28a745;
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        .review-notes {
+            background-color: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 5px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .review-notes h4 {
+            color: #856404;
+            margin-bottom: 10px;
+        }
+
+        .review-notes p {
+            color: #856404;
+            margin: 0;
+            line-height: 1.6;
+        }
+
+        .cta-button {
+            display: inline-block;
+            background: linear-gradient(135deg, #007bff, #0056b3);
+            color: white;
+            padding: 12px 30px;
+            text-decoration: none;
+            border-radius: 25px;
+            font-weight: 600;
+            font-size: 16px;
+            margin: 20px 0;
+            transition: transform 0.2s ease;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-2px);
+            text-decoration: none;
+            color: white;
+        }
+
+        .support-section {
+            background-color: #f8f9fa;
+            padding: 30px;
+            text-align: center;
+            margin-top: 40px;
+        }
+
+        .support-section h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+        }
+
+        .support-section p {
+            color: #7f8c8d;
+            margin-bottom: 20px;
+        }
+
+        .support-contact {
+            color: #007bff;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .footer {
+            background-color: #2c3e50;
+            color: #ecf0f1;
+            padding: 30px;
+            text-align: center;
+            font-size: 14px;
+        }
+
+        .footer p {
+            margin-bottom: 10px;
+        }
+
+        .footer a {
+            color: #3498db;
+            text-decoration: none;
+        }
+
+        .social-links {
+            margin: 20px 0;
+        }
+
+        .social-links a {
+            display: inline-block;
+            margin: 0 10px;
+            color: #bdc3c7;
+            font-size: 18px;
+            text-decoration: none;
+        }
+
+        @media (max-width: 600px) {
+            .content {
+                padding: 20px 15px;
+            }
+
+            .header {
+                padding: 20px 15px;
+            }
+
+            .status-title {
+                font-size: 20px;
+            }
+
+            .status-message {
+                font-size: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="email-container">
+    <!-- Header -->
+    <div class="header">
+        <h1 th:text="${app_name}">HealthCare App</h1>
+        <p>Professional Medical Platform</p>
+    </div>
+
+    <!-- Main Content -->
+    <div class="content">
+        <!-- Greeting -->
+        <p style="font-size: 16px; margin-bottom: 20px;">
+            Dear <span th:text="${full_name}" style="font-weight: 600;">Dr. Smith</span>,
+        </p>
+
+        <!-- Status Badge -->
+        <div class="status-badge" th:style="'background-color: ' + ${status_color}">
+            <span th:text="${application_status}">PENDING</span>
+        </div>
+
+        <!-- Status Information -->
+        <h2 class="status-title" th:text="${status_title}">Application Received</h2>
+        <p class="status-message" th:text="${status_message}">We have successfully received your doctor application.</p>
+        <p class="status-description" th:text="${status_description}">Our team will review your application and get back to you within 3-5 business days.</p>
+
+        <!-- Application Details -->
+        <div class="application-details">
+            <h3>Application Details</h3>
+            <div class="detail-item">
+                <span class="detail-label">Submitted Date:</span>
+                <span class="detail-value" th:text="${application_date}">January 15, 2024</span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">Current Status:</span>
+                <span class="detail-value" th:text="${application_status}">PENDING</span>
+            </div>
+        </div>
+
+        <!-- Review Notes (for rejected applications) -->
+        <div th:if="${application_status == 'REJECTED' and review_notes != null}" class="review-notes">
+            <h4>Review Feedback</h4>
+            <p th:text="${review_notes}">Please ensure all documents are clearly visible and meet our requirements.</p>
+        </div>
+
+        <!-- Next Steps -->
+        <div th:if="${show_next_steps}" class="next-steps">
+            <h3>What's Next?</h3>
+            <ul class="steps-list">
+                <li th:each="step : ${next_steps}" th:text="${step}">Our medical team will verify your credentials</li>
+            </ul>
+        </div>
+
+        <!-- CTA Button for Approved Applications -->
+        <div th:if="${application_status == 'APPROVED'}" style="text-align: center; margin: 30px 0;">
+            <a th:href="${login_url}" class="cta-button">Access Doctor Dashboard</a>
+        </div>
+    </div>
+
+    <!-- Support Section -->
+    <div class="support-section">
+        <h3>Need Help?</h3>
+        <p>If you have any questions about your application, our support team is here to help.</p>
+        <a th:href="'mailto:' + ${support_email}" class="support-contact" th:text="${support_email}">support@healthcare.com</a>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+        <p><strong th:text="${app_name}">HealthCare App</strong></p>
+        <p>Connecting patients with qualified healthcare professionals</p>
+
+        <div class="social-links">
+            <a href="#" title="Facebook">📘</a>
+            <a href="#" title="Twitter">🐦</a>
+            <a href="#" title="LinkedIn">💼</a>
+            <a href="#" title="Instagram">📷</a>
+        </div>
+
+        <p style="font-size: 12px; color: #95a5a6; margin-top: 20px;">
+            © <span th:text="${current_year}">2024</span> <span th:text="${app_name}">HealthCare App</span>. All rights reserved.<br>
+            You are receiving this email because you submitted a doctor application on our platform.
+        </p>
+    </div>
+</div>
+</body>
+</html>

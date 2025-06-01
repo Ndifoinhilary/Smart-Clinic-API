@@ -106,4 +106,13 @@ public class GlobalExceptionHandle {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(error);
     }
 
+    @ExceptionHandler(FileSizeExceptions.class)
+    public ResponseEntity<ErrorResponse> handleFileSizeException(FileSizeExceptions e, WebRequest request) {
+        ErrorResponse error = new ErrorResponse();
+        error.setMessage(e.getMessage());
+        error.setDetails(request.getDescription(false));
+        error.setErrorCode(HttpStatus.BAD_REQUEST.value());
+        return ResponseEntity.badRequest().body(error);
+    }
+
 }

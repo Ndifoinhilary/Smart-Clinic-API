@@ -11,15 +11,15 @@ public class DoctorApplicationDto {
     @NotBlank(message = "Give your highest qualification")
     private String highersQualifications;
 
-    @NotBlank(message = "Id photo is required")
+
     private String idPhoto;
 
-    @NotBlank(message = "Certificate is required")
+
     private String certificate;
 
     private String anyOtherQualifications;
 
-    @NotBlank(message = "Video is required")
+
     private String shortVideo;
 
 }

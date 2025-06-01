@@ -3,6 +3,7 @@ package org.bydefault.smartclinic.services.impl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bydefault.smartclinic.dtos.common.*;
+import org.bydefault.smartclinic.email.EmailService;
 import org.bydefault.smartclinic.entities.*;
 import org.bydefault.smartclinic.exception.ResourceNotFoundException;
 import org.bydefault.smartclinic.exception.UserNotVerifiedException;
@@ -21,6 +22,7 @@ import org.springframework.util.CollectionUtils;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -39,6 +41,7 @@ public class AdminServicesImpl implements AdminServices {
     private final AppointmentMapper appointmentMapper;
     private final MedicalReportMapper medicalReportMapper;
     private final SpecialtyMapper specialtyMapper;
+    private final EmailService emailService;
 
     @Override
     public Page<UserDto> getAllUsers(Role role, int page, int size, List<String> sortList, String sortOrder) {
@@ -68,26 +71,39 @@ public class AdminServicesImpl implements AdminServices {
         validateUserForDoctorOperation(user);
 
         Optional<Doctor> existingDoctor = doctorRepository.findOptionalByUser(user);
+        Doctor doctor;
+
         if (existingDoctor.isPresent()) {
-            Doctor doctor = existingDoctor.get();
-            doctor.setAccepted(true);
-            user.setRole(Role.DOCTOR);
-            doctorRepository.save(doctor);
-            userRepository.save(user);
-            log.info("Doctor application accepted for user id: {}", id);
-            return doctorMapper.toDto(doctor);
+            doctor = existingDoctor.get();
+            log.info("Updating existing doctor application for user id: {}", id);
+        } else {
+            doctor = Doctor.builder()
+                    .user(user)
+                    .build();
+            log.info("Creating new doctor record for user id: {}", id);
         }
 
-        Doctor doctor = Doctor.builder()
-                .user(user)
-                .accepted(true)
-                .build();
+        // Update doctor status
+        doctor.setAccepted(true);
+        doctor.setStatus(ApplicationStatus.APPROVED);
 
+        // Update user role
         user.setRole(Role.DOCTOR);
+
+        // Save both entities
         Doctor savedDoctor = doctorRepository.save(doctor);
         userRepository.save(user);
 
-        log.info("New doctor created and accepted for user id: {}", id);
+        // Send email notification asynchronously
+        CompletableFuture.runAsync(() -> {
+            try {
+                emailService.sendDoctorApplicationEmail(user.getEmail(), savedDoctor, ApplicationStatus.APPROVED);
+            } catch (Exception e) {
+                log.error("Failed to send doctor acceptance email for user id: {}", id, e);
+            }
+        });
+
+        log.info("Doctor application accepted for user id: {}", id);
         return doctorMapper.toDto(savedDoctor);
     }
 
@@ -99,16 +115,28 @@ public class AdminServicesImpl implements AdminServices {
         User user = findUserById(id);
         validateUserForDoctorOperation(user);
 
-        if (user.getRole() != Role.DOCTOR) {
-            throw new UserRoleException("User is not a doctor");
-        }
-
         Optional<Doctor> doctorOpt = doctorRepository.findOptionalByUser(user);
         if (doctorOpt.isEmpty()) {
             throw new ResourceNotFoundException("Doctor record not found for user");
         }
 
-        doctorRepository.delete(doctorOpt.get());
+        Doctor doctor = doctorOpt.get();
+
+        // Update status before deletion for email notification
+        doctor.setStatus(ApplicationStatus.REJECTED);
+        doctor.setAccepted(false);
+
+        // Send rejection email asynchronously
+        CompletableFuture.runAsync(() -> {
+            try {
+                emailService.sendDoctorApplicationEmail(user.getEmail(), doctor, ApplicationStatus.REJECTED);
+            } catch (Exception e) {
+                log.error("Failed to send doctor rejection email for user id: {}", id, e);
+            }
+        });
+
+        // Remove doctor record and reset a user role
+        doctorRepository.delete(doctor);
         user.setRole(Role.PATIENT);
         userRepository.save(user);
 
