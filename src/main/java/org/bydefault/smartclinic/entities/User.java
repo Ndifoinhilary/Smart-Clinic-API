@@ -53,6 +53,10 @@ public class User extends BaseEntity {
     @OneToMany(mappedBy = "patient")
     private Set<Appointment> appointments;
 
+    @ManyToOne
+    @JoinColumn(name = "doctor_id", referencedColumnName = "id")
+    private Doctor doctor;
+
 
     public boolean activateUser(String code) {
        if (this.code.equals(code)) {

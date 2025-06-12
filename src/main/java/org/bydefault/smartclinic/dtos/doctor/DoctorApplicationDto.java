@@ -22,4 +22,5 @@ public class DoctorApplicationDto {
 
     private String shortVideo;
 
+    private SpecialtyDto specialty;
 }

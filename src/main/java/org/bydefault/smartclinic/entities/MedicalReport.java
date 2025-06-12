@@ -6,6 +6,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
@@ -18,7 +21,11 @@ public class MedicalReport extends BaseEntity {
 
     private String clinicName;
 
+    private String reportType;
+
     private String note;
+
+    private LocalDate reportDate;
 
     @ManyToOne
     @JoinColumn(name = "doctor_id")

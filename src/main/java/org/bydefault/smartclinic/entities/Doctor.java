@@ -7,6 +7,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
+import java.util.HashSet;
 import java.util.stream.Collectors;
 
 @Entity
@@ -46,16 +47,18 @@ public class Doctor {
     private Specialty specialty;
 
     @OneToMany(mappedBy = "doctor", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<Availability> availabilities;
+    private Set<Availability> availabilities = new HashSet<>();
 
     @OneToOne(optional = false, cascade = CascadeType.ALL)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
+    // Updated patient relationship - better to use Set for unique patients
+    @OneToMany(mappedBy = "doctor", cascade = CascadeType.PERSIST)
+    private Set<User> patients = new HashSet<>();
 
-    @OneToMany(mappedBy = "doctor")
-    private Set<Appointment> appointments;
-
+    @OneToMany(mappedBy = "doctor", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Appointment> appointments = new HashSet<>();
 
     // =======================
     // BUSINESS LOGIC METHODS
@@ -64,7 +67,6 @@ public class Doctor {
     /*
      * Get a doctor's full name from an associated auth
      */
-
     public String getFullName() {
         return user.getFirstName() + " " + user.getLastName();
     }
@@ -72,7 +74,6 @@ public class Doctor {
     /*
      * Get doctors specialty name
      */
-
     public String getSpecialtyName() {
         return specialty != null ? specialty.getName() : "General Practice";
     }
@@ -80,22 +81,21 @@ public class Doctor {
     /*
      * Get available time slots for a specific date
      */
-
     public List<Availability> getAvailableTimeSlots(LocalDate date) {
         return availabilities.stream()
                 .filter(availability ->
                         availability.getDate().equals(date) &&
-                                availability.isAvailable()).toList();
+                                availability.isAvailable())
+                .collect(Collectors.toList());
     }
 
     /*
      * Get all appointments for a specific date
      */
-
     public List<Appointment> getAppointments(LocalDate date) {
         return appointments.stream()
-                .filter(appointment -> appointment.getDate().equals(date))
-                .toList();
+                .filter(appointment -> appointment.getAppointmentDate().toLocalDate().equals(date))
+                .collect(Collectors.toList());
     }
 
     /**
@@ -110,10 +110,30 @@ public class Doctor {
     }
 
     /**
+     * Get upcoming appointments
+     */
+    public List<Appointment> getUpcomingAppointments() {
+        LocalDateTime now = LocalDateTime.now();
+        return appointments.stream()
+                .filter(appointment -> appointment.getAppointmentDate().isAfter(now))
+                .filter(appointment -> appointment.getStatus().equals(AppointmentStatus.ACCEPTED) ||
+                        appointment.getStatus().equals(AppointmentStatus.PENDING))
+                .sorted((a1, a2) -> a1.getAppointmentDate().compareTo(a2.getAppointmentDate()))
+                .collect(Collectors.toList());
+    }
+
+    /**
      * Count total appointments
      */
     public int getTotalAppointments() {
-        return  this.appointments.size();
+        return this.appointments.size();
+    }
+
+    /**
+     * Count total patients
+     */
+    public int getTotalPatients() {
+        return this.patients.size();
     }
 
     /**
@@ -123,6 +143,8 @@ public class Doctor {
         LocalDate today = LocalDate.now();
         return appointments.stream()
                 .filter(appointment -> appointment.getAppointmentDate().toLocalDate().equals(today))
+                .filter(appointment -> appointment.getStatus().equals(AppointmentStatus.ACCEPTED) ||
+                        appointment.getStatus().equals(AppointmentStatus.PENDING))
                 .count();
     }
 
@@ -131,6 +153,23 @@ public class Doctor {
      */
     public boolean hasAppointmentsToday() {
         return getTodayAppointmentsCount() > 0;
+    }
+
+    /**
+     * Get pending appointments that need approval
+     */
+    public List<Appointment> getPendingAppointments() {
+        return appointments.stream()
+                .filter(appointment -> appointment.getStatus().equals(AppointmentStatus.PENDING))
+                .sorted((a1, a2) -> a1.getAppointmentDate().compareTo(a2.getAppointmentDate()))
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Check if a user is already a patient of this doctor
+     */
+    public boolean isPatient(User user) {
+        return patients.contains(user);
     }
 
     // =======================
@@ -169,5 +208,30 @@ public class Doctor {
         appointment.setDoctor(null);
     }
 
+    /**
+     * Add patient to doctor's patient list
+     */
+    public void addPatient(User patient) {
+        if (patient.getRole().equals(Role.PATIENT)) {
+            patients.add(patient);
+            patient.setDoctor(this);
+        }
+    }
 
+    /**
+     * Remove patient from doctor's patient list
+     */
+    public void removePatient(User patient) {
+        patients.remove(patient);
+        patient.setDoctor(null);
+    }
+
+    /**
+     * Get all patients as a list
+     */
+    public List<User> getPatientsList() {
+        return patients.stream()
+                .sorted((p1, p2) -> p1.getFirstName().compareTo(p2.getFirstName()))
+                .collect(Collectors.toList());
+    }
 }

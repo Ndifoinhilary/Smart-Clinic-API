@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -115,4 +114,21 @@ public class GlobalExceptionHandle {
         return ResponseEntity.badRequest().body(error);
     }
 
+@ExceptionHandler(UnauthorizedException.class)
+    public ResponseEntity<ErrorResponse> handleUnauthorizedException(UnauthorizedException e, WebRequest request) {
+        ErrorResponse error = new ErrorResponse();
+        error.setMessage(e.getMessage());
+        error.setDetails(request.getDescription(false));
+        error.setErrorCode(HttpStatus.UNAUTHORIZED.value());
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(error);
+    }
+
+    @ExceptionHandler(InvalidStateException.class)
+    public ResponseEntity<ErrorResponse> handleInvalidStateException(InvalidStateException e, WebRequest request) {
+        ErrorResponse error = new ErrorResponse();
+        error.setMessage(e.getMessage());
+        error.setDetails(request.getDescription(false));
+        error.setErrorCode(HttpStatus.BAD_REQUEST.value());
+        return ResponseEntity.badRequest().body(error);
+    }
 }

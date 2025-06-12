@@ -18,7 +18,8 @@ public class Availability {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String day;
+    @Enumerated(EnumType.STRING)
+    private Day day;
 
     private String time;
 

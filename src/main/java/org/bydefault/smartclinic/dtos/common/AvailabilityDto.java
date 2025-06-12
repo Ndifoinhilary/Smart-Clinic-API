@@ -2,6 +2,7 @@ package org.bydefault.smartclinic.dtos.common;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
+import org.bydefault.smartclinic.entities.Day;
 
 import java.util.Date;
 
@@ -10,7 +11,7 @@ import java.util.Date;
 public class AvailabilityDto {
     private Long id;
 
-    private String day;
+    private Day day;
 
     private String time;
 
