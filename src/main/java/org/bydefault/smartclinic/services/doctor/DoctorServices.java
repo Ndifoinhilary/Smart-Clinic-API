@@ -10,6 +10,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 
 public interface DoctorServices {
@@ -41,7 +42,7 @@ public interface DoctorServices {
 
     List<DoctorDto> getAllDoctorsByAvailability(
             String day,
-            String time
+            LocalTime time
     );
 
     List<DoctorDto> getAllDoctorsBySpecialty(

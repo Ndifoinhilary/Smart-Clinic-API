@@ -29,6 +29,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Set;
@@ -194,7 +195,7 @@ public class DoctorServicesImpl implements DoctorServices {
     }
 
     @Override
-    public List<DoctorDto> getAllDoctorsByAvailability(String day, String time) {
+    public List<DoctorDto> getAllDoctorsByAvailability(String day, LocalTime time) {
         // This method should return a list of doctors available on a specific day and time
         // Convert the day string to a Day enum
         Day dayEnum;
@@ -204,7 +205,7 @@ public class DoctorServicesImpl implements DoctorServices {
             throw new ResourceNotFoundException("Invalid day: " + day);
         }
         // Find all availabilities for the specified day and time
-        List<Availability> availabilities = availabilityRepository.findByDayAndTime(dayEnum, time);
+        List<Availability> availabilities = availabilityRepository.findByDayAndTime(dayEnum, String.valueOf(time));
         if (availabilities.isEmpty()) {
             throw new ResourceNotFoundException("No doctors available on " + day + " at " + time);
         }
