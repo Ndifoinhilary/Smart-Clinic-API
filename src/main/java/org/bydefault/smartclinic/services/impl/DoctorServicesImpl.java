@@ -12,7 +12,7 @@ import org.bydefault.smartclinic.email.EmailService;
 import org.bydefault.smartclinic.entities.*;
 import org.bydefault.smartclinic.exception.InvalidStateException;
 import org.bydefault.smartclinic.exception.ResourceNotFoundException;
-import org.bydefault.smartclinic.exception.UnauthorizedException;
+import org.bydefault.smartclinic.exception.UnAuthorizedException;
 import org.bydefault.smartclinic.exception.UserAlreadyExistException;
 import org.bydefault.smartclinic.mappers.AppointmentMapper;
 import org.bydefault.smartclinic.mappers.AvailabilityMapper;
@@ -326,7 +326,7 @@ public class DoctorServicesImpl implements DoctorServices {
         boolean isDoctor = appointment.getDoctor().getUser().getId().equals(userId);
 
         if (!isPatient && !isDoctor) {
-            throw new UnauthorizedException("You can only cancel your own appointments");
+            throw new UnAuthorizedException("You can only cancel your own appointments");
         }
 
         // Check if appointment can be canceled
@@ -370,7 +370,7 @@ public class DoctorServicesImpl implements DoctorServices {
         boolean isDoctor = appointment.getDoctor().getUser().getId().equals(userId);
 
         if (!isPatient && !isDoctor) {
-            throw new UnauthorizedException("You can only reschedule your own appointments");
+            throw new UnAuthorizedException("You can only reschedule your own appointments");
         }
 
         // Check if appointment can be rescheduled

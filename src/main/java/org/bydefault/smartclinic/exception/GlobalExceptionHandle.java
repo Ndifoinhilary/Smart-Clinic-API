@@ -114,8 +114,8 @@ public class GlobalExceptionHandle {
         return ResponseEntity.badRequest().body(error);
     }
 
-@ExceptionHandler(UnauthorizedException.class)
-    public ResponseEntity<ErrorResponse> handleUnauthorizedException(UnauthorizedException e, WebRequest request) {
+@ExceptionHandler(UnAuthorizedException.class)
+    public ResponseEntity<ErrorResponse> handleUnauthorizedException(UnAuthorizedException e, WebRequest request) {
         ErrorResponse error = new ErrorResponse();
         error.setMessage(e.getMessage());
         error.setDetails(request.getDescription(false));
@@ -130,5 +130,14 @@ public class GlobalExceptionHandle {
         error.setDetails(request.getDescription(false));
         error.setErrorCode(HttpStatus.BAD_REQUEST.value());
         return ResponseEntity.badRequest().body(error);
+    }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<ErrorResponse> handleIllegalArgumentException(IllegalArgumentException e, WebRequest request) {
+        ErrorResponse error = new ErrorResponse();
+        error.setMessage(e.getMessage());
+        error.setDetails(request.getDescription(false));
+        error.setErrorCode(HttpStatus.BAD_REQUEST.value());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
     }
 }
