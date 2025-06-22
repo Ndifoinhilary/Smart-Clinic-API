@@ -43,6 +43,7 @@ public class UserServicesImpl implements UserServices {
     @Override
     public String makeAppointment(Long doctorId, LocalDateTime appointmentDate, String description) {
         // Logic to make an appointment
+
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Long userId = (Long) authentication.getPrincipal();
         User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + userId));
@@ -172,10 +173,6 @@ public class UserServicesImpl implements UserServices {
 
     @Override
     public List<DoctorDto> allDoctorBySpecialty(String specialtyName) {
-
-        if (specialtyName == null || specialtyName.trim().isEmpty()) {
-            throw new IllegalArgumentException("Specialty name cannot be null or empty.");
-        }
         List<Doctor> doctors = doctorRepository.findBySpecialtyName(specialtyName);
         if (doctors.isEmpty()) {
             throw new ResourceNotFoundException("No doctors found with specialty: " + specialtyName);
